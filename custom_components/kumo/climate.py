@@ -461,17 +461,25 @@ class KumoThermostat(CoordinatedKumoEntity, ClimateEntity):
         target = {}
         try:
             if target_mode == HVACMode.HEAT_COOL:
-                target["cool"] = kwargs.get(ATTR_TARGET_TEMP_HIGH)
-                target["heat"] = kwargs.get(ATTR_TARGET_TEMP_LOW)
+                target_cool = kwargs.get(ATTR_TARGET_TEMP_HIGH)
+                target_cool = round(target_cool * 2) / 2
+                target_heat = kwargs.get(ATTR_TARGET_TEMP_LOW)
+                target_heat = round(target_heat * 2) / 2
+                target["cool"] = target_cool
+                target["heat"] = target_heat
                 if target["cool"] < target["heat"]:
                     _LOGGER.warning(
                         "Kumo %s heat_cool setpoints are inverted", self._name
                     )
                     target["cool"] = target["heat"]
             elif target_mode == HVACMode.COOL:
-                target["cool"] = kwargs.get(ATTR_TEMPERATURE)
+                target_cool = kwargs.get(ATTR_TEMPERATURE)
+                target_cool = round(target_cool * 2) / 2
+                target["cool"] = target_cool
             elif target_mode == HVACMode.HEAT:
-                target["heat"] = kwargs.get(ATTR_TEMPERATURE)
+                target_heat = kwargs.get(ATTR_TARGET_TEMP_LOW)
+                target_heat = round(target_heat * 2) / 2
+                target["heat"] = target_heat
         except KeyError as ke:
             _LOGGER.warning(
                 "Kumo %s set temp: %s required to set temp for %s ",

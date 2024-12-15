@@ -1,6 +1,8 @@
 """HomeAssistant climate component for KumoCloud connected HVAC units."""
 import logging
 import pprint
+import math
+
 
 import voluptuous as vol
 from homeassistant.components.climate import PLATFORM_SCHEMA
@@ -466,7 +468,7 @@ class KumoThermostat(CoordinatedKumoEntity, ClimateEntity):
                 target_cool = kwargs.get(ATTR_TARGET_TEMP_HIGH)
                 target_cool = round(target_cool * 2) / 2
                 target_heat = kwargs.get(ATTR_TARGET_TEMP_LOW)
-                target_heat = round(target_heat * 2) / 2
+                target_heat = math.ceil(target_heat * 2) / 2
                 target["cool"] = target_cool
                 target["heat"] = target_heat
                 if target["cool"] < target["heat"]:
@@ -480,7 +482,7 @@ class KumoThermostat(CoordinatedKumoEntity, ClimateEntity):
                 target["cool"] = target_cool
             elif target_mode == HVACMode.HEAT:
                 target_heat = kwargs.get(ATTR_TARGET_TEMP_LOW)
-                target_heat = round(target_heat * 2) / 2
+                target_heat = math.ceil(target_heat * 2) / 2
                 target["heat"] = target_heat
         except KeyError as ke:
             _LOGGER.warning(
